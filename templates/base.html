@@ -149,11 +149,19 @@
         id="mobile-menu"
         class="hidden bg-white border-t border-slate-100 p-6 space-y-4 md:hidden shadow-xl"
       >
+        {% if user %}
         <a
           href="/shop"
           class="block text-[11px] font-bold uppercase tracking-widest text-slate-900"
           >Shop</a
         >
+        {% else %}
+        <a
+          href="/login"
+          class="block text-[11px] font-bold uppercase tracking-widest text-slate-900"
+          >Shop</a
+        >
+        {% endif %}
         <a
           href="/contact"
           class="block text-[11px] font-bold uppercase tracking-widest text-slate-900"
