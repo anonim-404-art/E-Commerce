@@ -1,0 +1,102 @@
+{% extends "base.html" %} {% block content %}
+<div class="max-w-7xl mx-auto px-6 py-24">
+  <div class="flex flex-col lg:flex-row gap-20">
+    <div class="flex-1">
+      <h1
+        class="text-7xl font-[900] tracking-tighter text-slate-900 leading-none italic mb-10"
+      >
+        Talk to <br />
+        <span class="text-indigo-600">LUXE.</span>
+      </h1>
+      <p
+        class="text-slate-500 text-lg font-medium leading-relaxed max-w-md mb-12"
+      >
+        Whether you're inquiring about a curated collection or need assistance
+        with an order, our team is dedicated to providing a seamless experience.
+      </p>
+
+      <div class="space-y-8">
+        <div>
+          <h4
+            class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2"
+          >
+            Direct Inquiry
+          </h4>
+          <p class="text-xl font-bold text-slate-900">concierge@luxe.studio</p>
+        </div>
+        <div>
+          <h4
+            class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2"
+          >
+            Global Headquarters
+          </h4>
+          <p class="text-xl font-bold text-slate-900">
+            Design District, Manhattan, NY
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex-1">
+      <div
+        class="bg-white p-10 md:p-16 rounded-[4rem] shadow-[0_32px_64px_-15px_rgba(0,0,0,0.08)] border border-slate-50"
+      >
+        <form action="#" method="POST" class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2">
+              <label
+                class="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1"
+                >Name</label
+              >
+              <input
+                type="text"
+                placeholder="Your name"
+                class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all"
+              />
+            </div>
+            <div class="space-y-2">
+              <label
+                class="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1"
+                >Subject</label
+              >
+              <input
+                type="text"
+                placeholder="Order / General"
+                class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all"
+              />
+            </div>
+          </div>
+          <div class="space-y-2">
+            <label
+              class="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1"
+              >Email Address</label
+            >
+            <input
+              type="email"
+              placeholder="email@example.com"
+              class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all"
+            />
+          </div>
+          <div class="space-y-2">
+            <label
+              class="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1"
+              >Message</label
+            >
+            <textarea
+              rows="4"
+              placeholder="How can we help?"
+              class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all"
+            ></textarea>
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-slate-900 text-white py-6 rounded-2xl font-bold text-sm uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-xl shadow-indigo-100"
+          >
+            Send Message
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

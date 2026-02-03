@@ -1,0 +1,204 @@
+{% extends "base.html" %} {% block content %}
+<div class="max-w-7xl mx-auto px-6 py-16">
+  <h2 class="text-4xl font-[900] tracking-tighter text-slate-900 mb-12 italic">
+    Your Bag<span class="text-indigo-600">.</span>
+  </h2>
+
+  <div class="flex flex-col lg:flex-row gap-16">
+    <div class="flex-1 space-y-8">
+      {% if user.product %} {% for item in user.product %}
+      <div
+        class="flex flex-col md:flex-row items-center justify-between p-8 bg-white rounded-[3rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-500"
+      >
+        <div class="flex items-center space-x-8 w-full md:w-auto">
+          <div
+            class="w-32 h-32 rounded-[2rem] overflow-hidden bg-slate-50 flex-shrink-0"
+          >
+            <img src="{{ item.images }}" class="w-full h-full object-cover" />
+          </div>
+          <div>
+            <p
+              class="text-[10px] font-black text-indigo-600 uppercase tracking-widest mb-1"
+            >
+              {{ item.brand }}
+            </p>
+            <h3 class="text-xl font-bold text-slate-900">{{ item.name }}</h3>
+            <p class="text-slate-400 text-sm font-medium mt-1">
+              Category: {{ item.category|capitalize }}
+            </p>
+          </div>
+        </div>
+
+        <div
+          class="flex items-center justify-between w-full md:w-auto mt-6 md:mt-0 md:space-x-12"
+        >
+          <div
+            class="flex items-center bg-slate-50 rounded-2xl p-2 border border-slate-100"
+          >
+            <button
+              onclick="changeQty({{ item.id }}, -1)"
+              class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-indigo-600 transition"
+            >
+              -
+            </button>
+            <span
+              id="qty-{{ item.id }}"
+              class="w-8 text-center text-sm font-black text-slate-900"
+              >1</span
+            >
+            <button
+              onclick="changeQty({{ item.id }}, 1)"
+              class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-indigo-600 transition"
+            >
+              +
+            </button>
+          </div>
+
+          <div class="text-center min-w-[80px]">
+            <p
+              class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1"
+            >
+              Total
+            </p>
+            <p class="font-black text-slate-900">
+              $<span id="price-{{ item.id }}">{{ item.price }}</span>
+            </p>
+          </div>
+
+          <a
+            href="/delete_cart/{{ item.id }}"
+            class="p-4 bg-red-50 text-red-500 rounded-2xl hover:bg-red-500 hover:text-white transition-all active:scale-95"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      {% endfor %} {% else %}
+      <div
+        class="py-32 text-center bg-white rounded-[4rem] border border-dashed border-slate-200"
+      >
+        <p class="text-slate-400 font-medium text-lg italic mb-8">
+          Your bag is currently empty.
+        </p>
+        <a
+          href="/shop"
+          class="bg-slate-900 text-white px-12 py-5 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-indigo-600 transition shadow-2xl"
+        >
+          Discover Pieces
+        </a>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="w-full lg:w-[400px]">
+      <div
+        class="bg-white rounded-[3.5rem] p-10 border border-slate-100 shadow-2xl shadow-slate-200/50 sticky top-24"
+      >
+        <h3 class="text-2xl font-black text-slate-900 mb-8 italic">Summary</h3>
+
+        <div class="space-y-4 mb-8">
+          <div class="flex justify-between text-slate-500 font-medium">
+            <span>Items Count</span>
+            <span id="firstQty" class="text-slate-900">{{ user.product|length }}</span>
+          </div>
+          <div class="flex justify-between text-slate-500 font-medium">
+            <span>Shipping</span>
+            <span
+              class="text-green-500 font-bold uppercase text-[10px] tracking-widest pt-1"
+              >Complimentary</span
+            >
+          </div>
+          <div
+            class="pt-4 border-t border-slate-50 flex justify-between items-end"
+          >
+            <span class="text-slate-900 font-bold">Subtotal</span>
+            <span
+              id="subtotal"
+              class="text-3xl font-[900] text-slate-900 tracking-tighter"
+            >$<span id="currentTotal">
+{{ user.product | sum(attribute='price') }}
+            </span'>
+              
+            </span>
+          </div>
+        </div>
+
+        {% if user.product %}
+        <a
+          href="/checkout"
+          class="block w-full bg-slate-900 text-white text-center py-6 rounded-2xl font-bold text-xs uppercase tracking-[0.2em] hover:bg-indigo-600 transition-all shadow-xl shadow-indigo-100 active:scale-[0.98]"
+        >
+          Secure Checkout
+        </a>
+        {% else %}
+        <button
+          disabled
+          class="w-full bg-slate-100 text-slate-300 py-6 rounded-2xl font-bold text-xs uppercase tracking-[0.2em] cursor-not-out"
+        >
+          Bag Empty
+        </button>
+        {% endif %}
+
+        <p
+          class="text-center text-[10px] text-slate-400 font-medium mt-6 uppercase tracking-widest"
+        >
+          Taxes calculated at checkout
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div>
+  <script>
+    function changeQty(productId, num) {
+      const qtySpan = document.getElementById(`qty-${productId}`);
+      const priceSpan = document.getElementById(`price-${productId}`);
+      const subtotalSpan = document.getElementById(`subtotal`);
+      const currentTotalSpan = document.getElementById(`currentTotal`);
+      const firstQtySpan = document.getElementById(`firstQty`);
+      let currentQty = parseInt(qtySpan.innerText.trim());
+      let newQty = currentQty + num;
+      if (newQty < 1) return;
+      fetch("/app/data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ product_id: productId, qty: newQty }),
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          if (res.available) {
+        qtySpan.innerText = newQty;
+
+        let unitPrice = parseFloat(res.unit_price);
+        let productSubtotal = unitPrice * newQty;
+        priceSpan.innerText = (unitPrice * newQty).toFixed(2);
+
+        let oldGrandTotal = parseFloat(currentTotalSpan.innerText);
+        let oldProductTotal = unitPrice * currentQty;
+        let newGrandTotal = oldGrandTotal - oldProductTotal + productSubtotal;
+        
+        currentTotalSpan.innerText = newGrandTotal.toFixed(2);
+
+        let totalItems = parseInt(firstQtySpan.innerText);
+        firstQtySpan.innerText = totalItems + num;
+          } else {
+            alert("No more stock available!");
+          }
+        });
+    }
+  </script>
+{% endblock %}

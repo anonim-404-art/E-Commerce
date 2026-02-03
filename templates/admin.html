@@ -1,0 +1,90 @@
+{% extends "base.html" %} {% block content %}
+<div class="max-w-5xl mx-auto px-6 py-16">
+  <div
+    class="bg-slate-900 rounded-[3rem] p-12 text-white mb-12 shadow-2xl relative overflow-hidden"
+  >
+    <div class="relative z-10">
+      <h2 class="text-4xl font-[900] tracking-tighter italic">
+        Platform Control<span class="text-indigo-500">.</span>
+      </h2>
+      <p class="text-slate-400 mt-2 font-medium">
+        Manage pending seller applications and permissions.
+      </p>
+    </div>
+    <div
+      class="absolute top-0 right-0 w-64 h-64 bg-indigo-600/20 rounded-full -mr-20 -mt-20 blur-3xl"
+    ></div>
+  </div>
+
+  <div class="space-y-6">
+    <h3
+      class="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4"
+    >
+      Pending Requests ({{ requests|length }})
+    </h3>
+
+    {% for req in requests %}
+    <div
+      class="group bg-white p-8 rounded-[2.5rem] border border-slate-100 flex flex-col md:flex-row items-center justify-between shadow-sm hover:shadow-xl transition-all duration-500"
+    >
+      <div class="flex items-center space-x-6">
+        <div
+          class="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center font-black text-xl border border-indigo-100"
+        >
+          {{ req.user.name[0] }}
+        </div>
+        <div>
+          <h4 class="font-bold text-slate-900 text-lg">
+            {{ req.user.name }} {{ req.user.surname }}
+          </h4>
+          <p class="text-sm text-slate-400 font-medium tracking-tight">
+            {{ req.user.email }}
+          </p>
+        </div>
+      </div>
+
+      <div class="flex space-x-3 mt-6 md:mt-0">
+        <a
+          href="/approve/{{ req.user_id }}"
+          class="px-8 py-4 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-600 transition shadow-lg active:scale-95"
+        >
+          Approve Seller
+        </a>
+        <a
+          href="/reject/{{ req.user_id }}"
+          class="px-8 py-4 bg-red-50 text-red-500 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-500 hover:text-white transition active:scale-95"
+        >
+          Reject
+        </a>
+      </div>
+    </div>
+    {% endfor %} {% if not requests %}
+    <div
+      class="text-center py-24 bg-white rounded-[4rem] border border-dashed border-slate-200"
+    >
+      <div
+        class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6 text-slate-300"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M5 13l4 4L19 7"
+          />
+        </svg>
+      </div>
+      <p class="text-slate-400 font-medium italic">
+        Your queue is empty. No pending requests.
+      </p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends "base.html" %} {% block content %}
+<div class="max-w-7xl mx-auto px-6 py-24">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center mb-32">
+    <div class="order-2 lg:order-1">
+      <span
+        class="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-600 mb-6 block"
+        >Our Philosophy</span
+      >
+      <h1
+        class="text-6xl md:text-7xl font-[900] tracking-tighter text-slate-900 leading-none italic mb-8"
+      >
+        Defining the <br />
+        Modern <span class="text-indigo-600">Standard.</span>
+      </h1>
+      <p class="text-slate-500 text-lg font-medium leading-relaxed max-w-lg">
+        LUXE was founded on a singular principle: that premium quality should be
+        accessible, and minimalism should never be boring. We curate pieces that
+        stand the test of time, both in durability and style.
+      </p>
+    </div>
+    <div class="order-1 lg:order-2 relative">
+      <div class="aspect-[4/5] rounded-[4rem] overflow-hidden shadow-2xl">
+        <img
+          src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2070&auto=format&fit=crop"
+          class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000"
+        />
+      </div>
+      <div
+        class="absolute -bottom-10 -left-10 bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-50 hidden md:block"
+      >
+        <p
+          class="text-3xl font-black text-slate-900 leading-none tracking-tighter italic"
+        >
+          2026
+        </p>
+        <p
+          class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1"
+        >
+          Established
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="grid grid-cols-1 md:grid-cols-3 gap-12 border-t border-slate-100 pt-24"
+  >
+    <div class="space-y-4">
+      <div
+        class="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center text-white font-bold"
+      >
+        01
+      </div>
+      <h3 class="text-xl font-black text-slate-900 italic">Curation</h3>
+      <p class="text-slate-500 text-sm leading-relaxed">
+        Every item in our shop is hand-selected and tested for quality and
+        aesthetic alignment.
+      </p>
+    </div>
+    <div class="space-y-4">
+      <div
+        class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white font-bold"
+      >
+        02
+      </div>
+      <h3 class="text-xl font-black text-slate-900 italic">Sustainability</h3>
+      <p class="text-slate-500 text-sm leading-relaxed">
+        We partner with ethical manufacturers who prioritize the planet over
+        profit margins.
+      </p>
+    </div>
+    <div class="space-y-4">
+      <div
+        class="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center text-white font-bold"
+      >
+        03
+      </div>
+      <h3 class="text-xl font-black text-slate-900 italic">Community</h3>
+      <p class="text-slate-500 text-sm leading-relaxed">
+        Our sellers are part of an exclusive network of approved artisans and
+        boutiques.
+      </p>
+    </div>
+  </div>
+
+  <div class="mt-32 bg-slate-50 rounded-[4rem] p-16 md:p-24 text-center">
+    <h2 class="text-4xl font-black text-slate-900 tracking-tighter mb-8 italic">
+      Ready to join the collective?
+    </h2>
+    <div class="flex flex-col sm:flex-row justify-center gap-4">
+      <a
+        href="/shop"
+        class="bg-slate-900 text-white px-10 py-5 rounded-2xl font-bold hover:bg-indigo-600 transition shadow-xl"
+        >Browse Collections</a
+      >
+      <a
+        href="/account"
+        class="bg-white text-slate-900 border border-slate-200 px-10 py-5 rounded-2xl font-bold hover:bg-slate-900 hover:text-white transition"
+        >Create Account</a
+      >
+    </div>
+  </div>
+</div>
+{% endblock %}
