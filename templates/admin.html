@@ -16,50 +16,68 @@
     ></div>
   </div>
 
-  <div class="space-y-6">
+  <div id="admin-requests-container" class="space-y-6">
     <h3
+      id="requestsQty"
       class="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4"
-    >
-      Pending Requests ({{ requests|length }})
-    </h3>
-
-    {% for req in requests %}
-    <div
+    ></h3>
+  </div>
+</div>
+<script>
+  fetch("/api/user")
+    .then((response) => response.json())
+    .then((data) => {});
+  fetch("/api/admin_data")
+    .then((response) => response.json())
+    .then((data) => {
+      const requestsQty = document.getElementById("requestsQty");
+      const adminRequestsContainer = document.getElementById(
+        "admin-requests-container",
+      );
+      requestsQty.textContent = `Pending Requests (${data.length})`;
+      if (data != null && data.length > 0) {
+        adminRequestsContainer.innerHTML = "";
+        data.forEach((req) => {
+          adminRequestsContainer.innerHTML += `
+          <div
       class="group bg-white p-8 rounded-[2.5rem] border border-slate-100 flex flex-col md:flex-row items-center justify-between shadow-sm hover:shadow-xl transition-all duration-500"
     >
       <div class="flex items-center space-x-6">
         <div
           class="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center font-black text-xl border border-indigo-100"
         >
-          {{ req.user.name[0] }}
+          ${req.name[0]}
         </div>
         <div>
           <h4 class="font-bold text-slate-900 text-lg">
-            {{ req.user.name }} {{ req.user.surname }}
+            ${req.name} ${req.surname}
           </h4>
           <p class="text-sm text-slate-400 font-medium tracking-tight">
-            {{ req.user.email }}
+            ${req.email}
           </p>
         </div>
       </div>
 
       <div class="flex space-x-3 mt-6 md:mt-0">
         <a
-          href="/approve/{{ req.user_id }}"
+          href="/approve/${req.user_id}"
           class="px-8 py-4 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-600 transition shadow-lg active:scale-95"
         >
           Approve Seller
         </a>
         <a
-          href="/reject/{{ req.user_id }}"
+          href="/reject/${req.user_id}"
           class="px-8 py-4 bg-red-50 text-red-500 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-500 hover:text-white transition active:scale-95"
         >
           Reject
         </a>
       </div>
     </div>
-    {% endfor %} {% if not requests %}
-    <div
+          `;
+        });
+      } else {
+        adminRequestsContainer.innerHTML = `
+            <div
       class="text-center py-24 bg-white rounded-[4rem] border border-dashed border-slate-200"
     >
       <div
@@ -84,7 +102,8 @@
         Your queue is empty. No pending requests.
       </p>
     </div>
-    {% endif %}
-  </div>
-</div>
+        `;
+      }
+    });
+</script>
 {% endblock %}

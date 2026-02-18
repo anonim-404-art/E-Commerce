@@ -1,32 +1,21 @@
 {% extends "base.html" %} {% block content %}
-<div
-  class="max-w-7xl mx-auto px-6 py-16"
-  x-data="{ activeImg: '{{ product.images }}' }"
->
+<div class="max-w-7xl mx-auto px-6 py-16">
   <div class="flex flex-col lg:flex-row gap-20">
     <div class="flex-1 space-y-6">
       <div
         class="aspect-[4/5] rounded-[3.5rem] overflow-hidden bg-white shadow-2xl border border-slate-100"
       >
         <img
-          :src="activeImg"
+          id="main-img"
+          src=""
           class="w-full h-full object-cover transition-all duration-700"
-          alt="{{ product.name }}"
+          alt=""
         />
       </div>
-
-      <div class="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-        {% for img in [product.images, product.back_image, product.side_image,
-        product.bottom_image, product.just_image] %} {% if img %}
-        <button
-          @click="activeImg = '{{ img }}'"
-          :class="activeImg === '{{ img }}' ? 'ring-2 ring-indigo-600 opacity-100' : 'opacity-40 hover:opacity-100'"
-          class="w-24 h-24 rounded-2xl overflow-hidden bg-slate-100 transition-all flex-shrink-0"
-        >
-          <img src="{{ img }}" class="w-full h-full object-cover" />
-        </button>
-        {% endif %} {% endfor %}
-      </div>
+      <div
+        id="thumb-container"
+        class="flex gap-4 overflow-x-auto pb-4 scrollbar-hide"
+      ></div>
     </div>
 
     <div class="flex-1 flex flex-col justify-center max-w-xl">
@@ -35,18 +24,20 @@
       >
         <a href="/shop" class="hover:text-indigo-600">Shop</a>
         <span>/</span>
-        <span class="text-slate-900">{{ product.category }}</span>
+        <span id="breadcrumb-cat" class="text-slate-900"></span>
       </nav>
 
       <h1
+        id="p-name"
         class="text-5xl md:text-6xl font-[900] text-slate-900 tracking-tighter leading-none italic"
       >
-        {{ product.name }}<span class="text-indigo-600">.</span>
+        <span class="text-indigo-600">.</span>
       </h1>
 
       <div class="mt-6 flex items-center space-x-6">
-        <p class="text-3xl font-black text-slate-900">${{ product.price }}</p>
+        <p id="p-price" class="text-3xl font-black text-slate-900"></p>
         <span
+          id="stock-badge"
           class="px-3 py-1 bg-indigo-50 text-indigo-600 text-[10px] font-bold rounded-full uppercase tracking-widest"
         >
           In Stock
@@ -54,66 +45,31 @@
       </div>
 
       <div class="mt-10 space-y-6">
-        <p class="text-slate-500 leading-relaxed text-lg font-medium">
-          {{ product.description or "Exclusively crafted with premium materials,
-          this piece embodies the LUXE philosophy of timeless design and
-          exceptional quality." }}
-        </p>
-
-        {% if product.colors %}
-        <div>
-          <h4
-            class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4"
-          >
-            Available Colors
-          </h4>
-          <div class="flex gap-3">
-            {% for color in product.colors %}
-            <div
-              class="w-8 h-8 rounded-full border-2 border-white ring-1 ring-slate-200 shadow-sm"
-              style="background-color: {{ color }};"
-            ></div>
-            {% endfor %}
-          </div>
-        </div>
-        {% endif %}
+        <p
+          id="p-desc"
+          class="text-slate-500 leading-relaxed text-lg font-medium"
+        ></p>
+      </div>
+      <div>
+        <h4
+          class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4"
+        >
+          Available Colors
+        </h4>
+        <div id="color-container" class="flex gap-3"></div>
       </div>
 
       <div class="mt-12 flex flex-col sm:flex-row gap-4">
-        {% if product.quantity == 0 %}
-
-        <span
-          class="flex-1 bg-red-50 text-red-500 text-center py-6 rounded-[2rem] font-bold text-sm uppercase tracking-widest shadow-sm cursor-not-allowed"
-        >
-          Out of Stock
-        </span>
-        {% else%}
-
         <a
-          href="/add_cart/{{ product.id }}"
-          class="flex-1 bg-slate-900 text-white text-center py-6 rounded-[2rem] font-bold text-sm uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-2xl shadow-slate-200 active:scale-95"
+          id="cart-btn"
+          href="#"
+          class="flex-1 bg-slate-900 text-white text-center py-6 rounded-[2rem] font-bold text-sm uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-2xl"
         >
           Add to Cart
         </a>
-        {% endif %} {% if wishlist_item %}
         <a
-          href="/wishlist_delete/{{ product.id }}"
-          class="px-8 py-6 bg-red-50 text-red-500 rounded-[2rem] font-bold flex items-center justify-center hover:bg-red-100 transition"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6"
-            fill="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-            />
-          </svg>
-        </a>
-        {% else %}
-        <a
-          href="/wishlist_product/{{ product.id }}"
+          id="wishlist-btn"
+          href="#"
           class="px-8 py-6 bg-slate-50 text-slate-400 rounded-[2rem] font-bold flex items-center justify-center hover:text-indigo-600 transition"
         >
           <svg
@@ -131,7 +87,6 @@
             />
           </svg>
         </a>
-        {% endif %}
       </div>
 
       <div
@@ -139,16 +94,57 @@
       >
         <div>
           <p class="text-slate-900 mb-1">Brand</p>
-          <p>{{ product.brand }}</p>
+          <p id="p-brand"></p>
         </div>
         <div>
           <p class="text-slate-900 mb-1">Category</p>
-          <p>{{ product.category }}</p>
+          <p id="p-cat"></p>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const productId = window.location.pathname.split("/").pop();
+
+    fetch(`/api/single_product/${productId}`)
+      .then((res) => res.json())
+      .then((product) => {
+        if (product.error) {
+          window.location.href = "/shop";
+          return;
+        }
+
+        document.getElementById("p-name").innerHTML =
+          `${product.name}<span class="text-indigo-600">.</span>`;
+        document.getElementById("p-price").innerText = `$${product.price}`;
+        document.getElementById("p-desc").innerText =
+          product.description || "Premium quality piece.";
+        document.getElementById("breadcrumb-cat").innerText = product.category;
+        document.getElementById("p-brand").innerText = product.brand;
+        document.getElementById("p-cat").innerText = product.category;
+
+        const mainImg = document.getElementById("main-img");
+        mainImg.src = product.image;
+
+        document.getElementById("cart-btn").href = `/add_cart/${product.id}`;
+        document.getElementById("wishlist-btn").href =
+          `/wishlist_product/${product.id}`;
+
+        if (product.quantity <= 0) {
+          const btn = document.getElementById("cart-btn");
+          btn.innerText = "Out of Stock";
+          btn.classList.add("bg-red-50", "text-red-500", "cursor-not-allowed");
+          btn.href = "#";
+        }
+        const color = product.colors ? product.colors[0] : null;
+
+        document.getElementById("color-container").innerHTML = color
+          ? `<div class="w-8 h-8 rounded-full border-2 border-white ring-1 ring-slate-200 shadow-sm" style="background-color: ${color};"></div>`
+          : "";
+      });
+  });
+</script>
 {% endblock %}

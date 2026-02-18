@@ -74,119 +74,13 @@
           <a href="/about" class="hover:text-indigo-600 transition">About</a>
         </div>
 
-        <div class="flex items-center space-x-6">
-          {% if user %} {% if user.role == "admin" %}
-          <a
-            href="/admin"
-            class="hidden md:block text-[10px] font-black bg-indigo-600 text-white px-4 py-2 rounded-full uppercase tracking-widest shadow-lg shadow-indigo-100"
-            >Admin</a
-          >
-          {% elif user.role == "seller" %}
-          <a
-            href="/product"
-            class="hidden md:block text-[10px] font-black bg-slate-900 text-white px-4 py-2 rounded-full uppercase tracking-widest shadow-lg"
-            >Sell</a
-          >
-          {% endif %}
-
-          <a href="/wishlist" class="relative group">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5 text-slate-400 group-hover:text-indigo-600 transition"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-              />
-            </svg>
-          </a>
-
-          <a href="/cart" class="relative group">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5 text-slate-400 group-hover:text-slate-900 transition"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-              />
-            </svg>
-            {% if user.product %}
-            <span
-              class="absolute -top-2 -right-2 bg-indigo-600 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center"
-              >{{ user.product|length }}</span
-            >
-            {% endif %}
-          </a>
-
-          <a
-            href="/account_info"
-            class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold border border-slate-200 hover:border-indigo-600 transition"
-          >
-            {{ user.name[0] }}
-          </a>
-          {% else %}
-          <a
-            href="/account"
-            class="text-[11px] font-bold uppercase tracking-widest text-slate-900 hover:text-indigo-600 transition"
-            >Sign In</a
-          >
-          {% endif %}
-        </div>
+        <div id="user-menu" class="flex items-center space-x-6"></div>
       </div>
 
       <div
         id="mobile-menu"
         class="hidden bg-white border-t border-slate-100 p-6 space-y-4 md:hidden shadow-xl"
-      >
-        {% if user %}
-        <a
-          href="/shop"
-          class="block text-[11px] font-bold uppercase tracking-widest text-slate-900"
-          >Shop</a
-        >
-        {% else %}
-        <a
-          href="/login"
-          class="block text-[11px] font-bold uppercase tracking-widest text-slate-900"
-          >Shop</a
-        >
-        {% endif %}
-        <a
-          href="/contact"
-          class="block text-[11px] font-bold uppercase tracking-widest text-slate-900"
-          >Contact</a
-        >
-        <a
-          href="/about"
-          class="block text-[11px] font-bold uppercase tracking-widest text-slate-900"
-          >About</a
-        >
-        <hr class="border-slate-50" />
-        {% if user %} {% if user.role == "admin" %}
-        <a
-          href="/admin"
-          class="block text-[11px] font-black text-indigo-600 uppercase tracking-widest"
-          >Admin Dashboard</a
-        >
-        {% elif user.role == "seller" %}
-        <a
-          href="/product"
-          class="block text-[11px] font-black text-slate-900 uppercase tracking-widest"
-          >Sell Product</a
-        >
-        {% endif %} {% endif %}
-      </div>
+      ></div>
     </nav>
 
     <main class="min-h-screen">{% block content %} {% endblock %}</main>
@@ -317,6 +211,134 @@
         .addEventListener("click", function () {
           document.getElementById("mobile-menu").classList.toggle("hidden");
         });
+      fetch("/api/user")
+        .then((response) => response.json())
+        .then((data) => {
+          const userMenu = document.getElementById("user-menu");
+          const mobileMenu = document.getElementById("mobile-menu");
+          if (data.logged_in) {
+            userMenu.innerHTML = `
+          ${
+            data.role === "admin"
+              ? `          <a
+            href="/admin"
+            class="hidden md:block text-[10px] font-black bg-indigo-600 text-white px-4 py-2 rounded-full uppercase tracking-widest shadow-lg shadow-indigo-100"
+            >Admin</a
+          >`
+              : data.role === "seller"
+                ? `          <a
+            href="/product"
+            class="hidden md:block text-[10px] font-black bg-slate-900 text-white px-4 py-2 rounded-full uppercase tracking-widest shadow-lg"
+            >Sell</a
+          >`
+                : ``
+          }
+          <a href="/wishlist" class="relative group">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 text-slate-400 group-hover:text-indigo-600 transition"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+              />
+            </svg>
+          </a>
+
+          <a href="/cart" class="relative group">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 text-slate-400 group-hover:text-slate-900 transition"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+              />
+            </svg>
+          ${
+            data.products.length > 0
+              ? `            <span
+              class="absolute -top-2 -right-2 bg-indigo-600 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center"
+              >${data.products.length}</span
+            >`
+              : ""
+          }
+
+          </a>
+
+          <a
+            href="/account_info"
+            class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold border border-slate-200 hover:border-indigo-600 transition"
+          >
+            ${data.name[0]}
+          </a>
+          `;
+          } else {
+            userMenu.innerHTML = `
+                      <a
+            href="/account"
+            class="text-[11px] font-bold uppercase tracking-widest text-slate-900 hover:text-indigo-600 transition"
+            >Sign In</a
+          >
+            `;
+          }
+        });
+      mobileMenu.innerHTML = `
+        ${
+          data.logged_in
+            ? `        <a
+          href="/shop"
+          class="block text-[11px] font-bold uppercase tracking-widest text-slate-900"
+          >Shop</a
+        >`
+            : `        <a
+          href="/login"
+          class="block text-[11px] font-bold uppercase tracking-widest text-slate-900"
+          >Shop</a
+        >`
+        }
+        <a
+          href="/contact"
+          class="block text-[11px] font-bold uppercase tracking-widest text-slate-900"
+          >Contact</a
+        >
+        <a
+          href="/about"
+          class="block text-[11px] font-bold uppercase tracking-widest text-slate-900"
+          >About</a
+        >
+        <hr class="border-slate-50" />
+      ${
+        data.logged_in
+          ? data.role === "admin"
+            ? `
+        <a
+          href="/admin"
+          class="block text-[11px] font-black text-indigo-600 uppercase tracking-widest"
+          >Admin Dashboard</a
+        >
+      `
+            : data.role === "seller"
+              ? `
+      <a
+          href="/product"
+          class="block text-[11px] font-black text-slate-900 uppercase tracking-widest"
+          >Sell Product</a
+        >
+      `
+              : ``
+          : ``
+      }`;
     </script>
   </body>
 </html>

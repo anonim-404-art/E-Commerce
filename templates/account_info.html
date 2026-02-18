@@ -2,160 +2,85 @@
 <div class="max-w-7xl mx-auto px-6 py-16">
   <div class="flex flex-col lg:flex-row gap-12">
     <div class="w-full lg:w-1/4">
-      <div
-        class="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm sticky top-24"
-      >
+      <div class="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm sticky top-24">
         <h2 class="text-2xl font-black text-slate-900 mb-8 italic">
           Account<span class="text-indigo-600">.</span>
         </h2>
-        <div
-          class="flex flex-col space-y-2 nav flex-column nav-pills"
-          id="v-pills-tab"
-          role="tablist"
-        >
-          <button
-            class="nav-link active text-left px-6 py-4 rounded-2xl font-bold text-sm transition-all"
-            data-bs-toggle="pill"
-            data-bs-target="#v-pills-profile"
-            type="button"
-          >
+        <div class="flex flex-col space-y-2 nav flex-column nav-pills" id="v-pills-tab" role="tablist">
+          <button class="nav-link active text-left px-6 py-4 rounded-2xl font-bold text-sm transition-all"
+            data-bs-toggle="pill" data-bs-target="#v-pills-profile" type="button">
             Profile
           </button>
-          <button
-            class="nav-link text-left px-6 py-4 rounded-2xl font-bold text-sm transition-all"
-            data-bs-toggle="pill"
-            data-bs-target="#v-pills-orders"
-            type="button"
-          >
+          <button class="nav-link text-left px-6 py-4 rounded-2xl font-bold text-sm transition-all"
+            data-bs-toggle="pill" data-bs-target="#v-pills-orders" type="button">
             Orders
           </button>
-          <button
-            class="nav-link text-left px-6 py-4 rounded-2xl font-bold text-sm transition-all"
-            data-bs-toggle="pill"
-            data-bs-target="#v-pills-address"
-            type="button"
-          >
+          <button class="nav-link text-left px-6 py-4 rounded-2xl font-bold text-sm transition-all"
+            data-bs-toggle="pill" data-bs-target="#v-pills-address" type="button">
             Address
           </button>
-          <a
-            href="/logout"
-            class="px-6 py-4 text-red-500 font-bold text-sm hover:bg-red-50 rounded-2xl transition-all mt-4"
-            >Sign Out</a
-          >
+          <a href="/logout"
+            class="px-6 py-4 text-red-500 font-bold text-sm hover:bg-red-50 rounded-2xl transition-all mt-4">Sign
+            Out</a>
         </div>
         <div class="mt-12 pt-10 border-t border-slate-100">
-    <div class="bg-indigo-50 rounded-[2.5rem] p-8 md:p-10 border border-indigo-100">
-        <h3 class="text-xl font-black text-slate-900 mb-2 italic">Sell on LUXE<span class="text-indigo-600">.</span></h3>
-        
-        {% if user.role == 'seller' %}
-            <p class="text-green-600 font-bold text-[10px] uppercase tracking-[0.2em] flex items-center">
-                <span class="mr-2">●</span> Your store is active
-            </p>
-        {% elif user.role == 'admin' %}
-            <p class="text-indigo-600 font-bold text-[10px] uppercase tracking-[0.2em]">Admin Level Access</p>
-        {% else %}
-            <p class="text-sm text-slate-600 mb-6 font-medium">Ready to start selling? Once your address is saved, you can request seller status.</p>
-            
-            <div class="flex flex-col sm:flex-row gap-4">
-                {% if not data_check %}
-                    <button class="bg-slate-900 text-white px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-600 transition-all" 
-                            data-bs-toggle="pill" data-bs-target="#v-pills-address">
-                        Fill Address First
-                    </button>
-                {% else %}
-                    <a href="{{ url_for('admin_request') }}" 
-                       class="bg-indigo-600 text-white px-10 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-900 transition-all text-center">
-                        Submit Seller Request
-                    </a>
-                {% endif %}
-            </div>
-        {% endif %}
-    </div>
-</div>
+          <div class="bg-indigo-50 rounded-[2.5rem] p-8 md:p-10 border border-indigo-100">
+            <h3 class="text-xl font-black text-slate-900 mb-2 italic">Sell on LUXE<span class="text-indigo-600">.</span>
+            </h3>
+            <div id="request-status" class="mb-6"></div>
+          </div>
+        </div>
       </div>
     </div>
 
     <div class="flex-1">
       <div class="tab-content" id="v-pills-tabContent">
-        <div
-          class="tab-pane fade show active"
-          id="v-pills-profile"
-          role="tabpanel"
-        >
-          <div
-            class="bg-white rounded-[3rem] p-10 border border-slate-100 shadow-sm"
-          >
+        <div class="tab-pane fade show active" id="v-pills-profile" role="tabpanel">
+          <div class="bg-white rounded-[3rem] p-10 border border-slate-100 shadow-sm">
             <div class="flex justify-between items-center mb-8">
               <h3 class="text-xl font-black text-slate-900">
                 Personal Information
               </h3>
-              <button
-                id="edit-user-btn"
-                class="text-xs font-black uppercase tracking-widest text-indigo-600 hover:text-slate-900 transition"
-              >
+              <button id="edit-user-btn"
+                class="text-xs font-black uppercase tracking-widest text-indigo-600 hover:text-slate-900 transition">
                 Edit
               </button>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
               <div>
-                <p
-                  class="text-[10px] font-black text-slate-400 uppercase tracking-widest"
-                >
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                   First Name
                 </p>
-                <p class="text-lg font-bold text-slate-900">{{ user.name }}</p>
+                <p id="user-name" class="text-lg font-bold text-slate-900"></p>
               </div>
               <div>
-                <p
-                  class="text-[10px] font-black text-slate-400 uppercase tracking-widest"
-                >
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                   Surname
                 </p>
-                <p class="text-lg font-bold text-slate-900">
-                  {{ user.surname }}
+                <p id="user-surname" class="text-lg font-bold text-slate-900">
                 </p>
               </div>
               <div class="md:col-span-2">
-                <p
-                  class="text-[10px] font-black text-slate-400 uppercase tracking-widest"
-                >
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                   Email
                 </p>
-                <p class="text-lg font-bold text-slate-900">{{ user.email }}</p>
+                <p id="user-email" class="text-lg font-bold text-slate-900"></p>
               </div>
             </div>
 
-            <div
-              id="edit-user-form"
-              style="display: none"
-              class="mt-8 pt-8 border-t border-slate-100"
-            >
+            <div id="edit-user-form" style="display: none" class="mt-8 pt-8 border-t border-slate-100">
               <form action="/change_user_info" method="POST" class="space-y-4">
                 <div class="grid grid-cols-2 gap-4">
-                  <input
-                    type="text"
-                    name="name"
-                    value="{{ user.name }}"
-                    class="w-full px-6 py-4 rounded-xl bg-slate-50 outline-none border border-transparent focus:border-indigo-600"
-                  />
-                  <input
-                    type="text"
-                    name="surname"
-                    value="{{ user.surname }}"
-                    class="w-full px-6 py-4 rounded-xl bg-slate-50 outline-none border border-transparent focus:border-indigo-600"
-                  />
+                  <input id="input-name" type="text" name="name"
+                    class="w-full px-6 py-4 rounded-xl bg-slate-50 outline-none border border-transparent focus:border-indigo-600" />
+                  <input type="text" name="surname" id="input-surname"
+                    class="w-full px-6 py-4 rounded-xl bg-slate-50 outline-none border border-transparent focus:border-indigo-600" />
                 </div>
-                <input
-                  type="email"
-                  name="email"
-                  value="{{ user.email }}"
-                  class="w-full px-6 py-4 rounded-xl bg-slate-50 outline-none border border-transparent focus:border-indigo-600"
-                />
-                <button
-                  type="submit"
-                  class="bg-slate-900 text-white px-8 py-4 rounded-xl font-bold text-[10px] uppercase tracking-widest"
-                >
+                <input type="email" name="email" id="input-email"
+                  class="w-full px-6 py-4 rounded-xl bg-slate-50 outline-none border border-transparent focus:border-indigo-600" />
+                <button type="submit"
+                  class="bg-slate-900 text-white px-8 py-4 rounded-xl font-bold text-[10px] uppercase tracking-widest">
                   Update Profile
                 </button>
               </form>
@@ -164,14 +89,187 @@
         </div>
 
         <div class="tab-pane fade" id="v-pills-orders" role="tabpanel">
-          <div class="space-y-6">
-            {% if orders %} {% for order in orders %}
+          <div id="order-cont" class="space-y-6">
+
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="v-pills-address" role="tabpanel">
+          <div class="bg-white rounded-[3rem] p-10 border border-slate-100 shadow-sm">
+            <div class="flex justify-between items-center mb-8">
+              <h3 class="text-xl font-black text-slate-900">Default Shipping Address</h3>
+              <button id="edit-info-btn"
+                class="text-[10px] font-black uppercase tracking-widest text-indigo-600 border border-indigo-100 px-4 py-2 rounded-full hover:bg-indigo-600 hover:text-white transition">Update
+                Address</button>
+            </div>
+            <div id="address-cont"></div>
+
+
+            <div id="edit-info-form" style="display:none;" class="mt-8 pt-8 border-t border-slate-100">
+              <form action="/checkout_update" method="POST" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div class="space-y-1">
+                    <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Surname</label>
+                    <input id="input-surname-address" type="text" name="surname"
+                      class="w-full px-6 py-4 rounded-xl bg-slate-50 border-none outline-none focus:ring-2 focus:ring-indigo-600">
+                  </div>
+                  <div class="space-y-1">
+                    <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Phone Number</label>
+                    <input type="text" name="phone" id="input-phone"
+                      class="w-full px-6 py-4 rounded-xl bg-slate-50 border-none outline-none focus:ring-2 focus:ring-indigo-600">
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div class="space-y-1">
+                    <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Company Name</label>
+                    <input type="text" name="company" id="input-company"
+                      class="w-full px-6 py-4 rounded-xl bg-slate-50 border-none outline-none">
+                  </div>
+                  <div class="space-y-1">
+                    <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Country</label>
+                    <select name="country" id="input-country"
+                      class="w-full px-6 py-4 rounded-xl bg-slate-50 border-none outline-none appearance-none">
+
+                    </select>
+                  </div>
+                </div>
+
+                <div class="space-y-4">
+                  <div class="space-y-1">
+                    <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Street Address 1</label>
+                    <input id="input-address-1" type="text" name="address_1" required
+                      class="w-full px-6 py-4 rounded-xl bg-slate-50 border-none outline-none">
+                  </div>
+                  <div class="space-y-1">
+                    <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Street Address 2
+                      (Optional)</label>
+                    <input id="input-address-2" type="text" name="address_2"
+                      class="w-full px-6 py-4 rounded-xl bg-slate-50 border-none outline-none">
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div class="space-y-1">
+                    <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Town / City</label>
+                    <input id="input-town" type="text" name="town" required
+                      class="w-full px-6 py-4 rounded-xl bg-slate-50 border-none outline-none">
+                  </div>
+                  <div class="space-y-1">
+                    <label class="text-[10px] font-black text-slate-400 uppercase ml-2">State</label>
+                    <input id="input-state" type="text" name="state" required
+                      class="w-full px-6 py-4 rounded-xl bg-slate-50 border-none outline-none">
+                  </div>
+                  <div class="space-y-1">
+                    <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Zip Code</label>
+                    <input id="input-zip" type="text" name="zip" required
+                      class="w-full px-6 py-4 rounded-xl bg-slate-50 border-none outline-none">
+                  </div>
+                </div>
+
+                <button type="submit"
+                  class="w-full bg-slate-900 text-white py-5 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-indigo-600 transition shadow-xl">
+                  Save Delivery Profile
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+<script>
+  fetch('/api/account_info')
+    .then(res => res.json())
+    .then(data => {
+      const user = data.user;
+      const orders = data.orders;
+      const data_check = data.data_check;
+      const countries = data.countries;
+
+      const ordersContainer = document.getElementById('order-cont');
+      const requestStatus = document.getElementById('request-status');
+      const addressCont = document.getElementById('address-cont');
+
+      const userName = document.getElementById('user-name');
+      const userSurname = document.getElementById('user-surname');
+      const userEmail = document.getElementById('user-email');
+      const inputName = document.getElementById('input-name');
+      const inputSurname = document.getElementById('input-surname-address');
+      const inputEmail = document.getElementById('input-email');
+      const inputPhone = document.getElementById('input-phone');
+      const inputCompany = document.getElementById('input-company');
+      const inputCountry = document.getElementById('input-country');
+      const inputAddress1 = document.getElementById('input-address-1');
+      const inputAddress2 = document.getElementById('input-address-2');
+      const inputTown = document.getElementById('input-town');
+      const inputState = document.getElementById('input-state');
+      const inputZip = document.getElementById('input-zip');
+
+
+      // Just replacing text
+      userName.textContent = user.name;
+      userSurname.textContent = user.surname;
+      userEmail.textContent = user.email;
+      inputName.value = user.name;
+      inputSurname.value = user.surname;
+      inputEmail.value = user.email;
+      // User information section like email and name
+      if (user.role === 'seller') {
+        requestStatus.innerHTML = `
+          <p class="text-green-600 font-bold text-[10px] uppercase tracking-[0.2em] flex items-center">
+            <span class="mr-2">●</span> Your store is active
+          </p>
+        `;
+      } else if (user.role === 'admin') {
+        requestStatus.innerHTML = `
+          <p class="text-indigo-600 font-bold text-[10px] uppercase tracking-[0.2em]">Admin Level Access</p>
+        `;
+      } else {
+        requestStatus.innerHTML = `
+          <p class="text-sm text-slate-600 mb-6 font-medium">Ready to start selling? Once your address is saved, you can request seller status.</p>
+          
+          <div class="flex flex-col sm:flex-row gap-4">
+            ${!data.data_check ? `
+              <button class="bg-slate-900 text-white px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-600 transition-all" 
+                      data-bs-toggle="pill" data-bs-target="#v-pills-address">
+                  Fill Address First
+              </button>
+            ` : `
+              <a href="/admin_request" 
+                 class="bg-indigo-600 text-white px-10 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-900 transition-all text-center">
+                  Submit Seller Request
+              </a>
+            `}
+          </div>
+        `;
+      }
+
+      // Orders section
+      if (!orders || orders.length === 0) {
+        ordersContainer.innerHTML = `
+            <div
+              class="py-20 text-center bg-white rounded-[3rem] border border-dashed border-slate-200"
+            >
+              <p class="text-slate-400 font-medium italic">
+                No purchase history available.
+              </p>
+            </div>
+        `;
+      } else {
+        ordersContainer.innerHTML = '';
+        orders.forEach((order) => {
+          if (order.qty === 0) return;
+          ordersContainer.innerHTML += `
             <div
               class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden"
             >
               <div
                 class="p-8 flex flex-wrap items-center justify-between gap-6 cursor-pointer hover:bg-slate-50 transition-colors"
-                onclick="toggleOrderDetails('order-{{ order.id }}')"
+                onclick="toggleOrderDetails('order-${order.id}')"
               >
                 <div>
                   <p
@@ -180,7 +278,7 @@
                     Order Date
                   </p>
                   <p class="font-bold text-slate-900">
-                    {{ order.date}}
+                    ${order.date}
                   </p>
                 </div>
                 <div>
@@ -190,7 +288,7 @@
                     Items
                   </p>
                   <p class="font-bold text-slate-900">
-                    {{ allQty }} Pieces
+                    ${order.qty} Pieces
                   </p>
                 </div>
                 <div>
@@ -200,7 +298,7 @@
                     Total
                   </p>
                   <p class="font-bold text-slate-900">
-                    ${{ subtotal }}
+                    $${order.total}
                   </p>
                 </div>
                 <div class="text-right">
@@ -211,43 +309,38 @@
               </div>
 
               <div
-                id="order-{{ order.id }}"
+                id="order-${order.id}"
                 style="display: none"
                 class="px-8 pb-8 pt-4 border-t border-slate-50 bg-slate-50/30"
               >
                 <div class="space-y-4 mb-6">
-                  {% for prod in products[order.id] %}
-<div class="flex items-center space-x-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-50">
-  <img
-    src="{{ prod.image }}"
-    class="w-16 h-16 rounded-xl object-cover border border-slate-100"
-  />
-
-  <div class="flex-1">
-    <div class="flex justify-between items-start">
-      <div>
-        <p class="text-sm font-bold text-slate-900 leading-none mb-1">
-          {{ prod.name }}
-        </p>
-        <span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-[10px] font-bold rounded-md uppercase">
-          Qty: {{ prod.quantity }}
-        </span>
-      </div>
-      
-      <div class="text-right">
-        <p class="text-[10px] font-black text-indigo-600 uppercase">
-          ${{ prod.price }} each
-        </p>
-        <p class="text-sm font-black text-slate-900">
-          ${{ prod.total_price }}
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
-                  {% endfor %}
+                  ${order.items.map(prod => `
+            <div class="flex items-center space-x-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-50">
+                <img src="${prod.image}" class="w-16 h-16 rounded-xl object-cover border border-slate-100" />
+                <div class="flex-1">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-bold text-slate-900 leading-none mb-1">
+                                ${prod.name}
+                            </p>
+                            <span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-[10px] font-bold rounded-md uppercase">
+                                Qty: ${prod.quantity}
+                            </span>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[10px] font-black text-indigo-600 uppercase">
+                                $${prod.price} each
+                            </p>
+                            <p class="text-sm font-black text-slate-900">
+                                $${prod.total_price}
+                            </p>
+                        </div>
+                    </div>
                 </div>
-                {% if order.note %}
+            </div>
+        `).join('')}
+                </div>
+                ${order.note ? `
                 <div
                   class="p-4 bg-indigo-50/50 rounded-2xl border border-indigo-100"
                 >
@@ -257,119 +350,60 @@
                     Order Note
                   </p>
                   <p class="text-xs text-slate-600 italic">
-                    "{{ order.note }}"
+                    "${order.note}"
                   </p>
-                </div>
-                {% endif %}
+                </div> 
+                ` : ``}
               </div>
             </div>
-            {% endfor %} {% else %}
-            <div
-              class="py-20 text-center bg-white rounded-[3rem] border border-dashed border-slate-200"
-            >
-              <p class="text-slate-400 font-medium italic">
-                No purchase history available.
-              </p>
-            </div>
-            {% endif %}
-          </div>
-        </div>
-
-        <div class="tab-pane fade" id="v-pills-address" role="tabpanel">
-    <div class="bg-white rounded-[3rem] p-10 border border-slate-100 shadow-sm">
-        <div class="flex justify-between items-center mb-8">
-            <h3 class="text-xl font-black text-slate-900">Default Shipping Address</h3>
-            <button id="edit-info-btn" class="text-[10px] font-black uppercase tracking-widest text-indigo-600 border border-indigo-100 px-4 py-2 rounded-full hover:bg-indigo-600 hover:text-white transition">Update Address</button>
-        </div>
-
-        {% if data_check %}
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 bg-slate-50 rounded-3xl mb-10">
-            <div class="space-y-1">
+        `
+        });
+      }
+      // Address section
+      if (data_check) {
+        addressCont.innerHTML = `
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 bg-slate-50 rounded-3xl mb-10">
+              <div class="space-y-1">
                 <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Location</p>
                 <p class="text-sm font-bold text-slate-700">
-                    {{ data_check.street_address_1 }}<br>
-                    {% if data_check.street_address_2 %}{{ data_check.street_address_2 }}<br>{% endif %}
-                    {{ data_check.town }}, {{ data_check.state }} {{ data_check.zip_code }}<br>
-                    {{ data_check.country }}
+                  ${data_check.address_1}<br>
+                  ${data_check.address_2 ? data_check.address_2 + '<br>' : ''}
+                  ${data_check.town}, ${data_check.state} ${data_check.zip}<br>
+                  ${data_check.country}
                 </p>
-            </div>
-            <div class="space-y-1">
+              </div>
+              <div class="space-y-1">
                 <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Contact Information</p>
-                <p class="text-sm font-bold text-slate-700">Phone: {{ data_check.number }}</p>
-                <p class="text-sm font-bold text-slate-700">Company: {{ data_check.company_name or 'Not specified' }}</p>
+                <p class="text-sm font-bold text-slate-700">Phone: ${data_check.phone}</p>
+                <p class="text-sm font-bold text-slate-700">Company: ${data_check.company || 'Not specified'}
+                </p>
+              </div>
             </div>
-        </div>
-        {% else %}
-        <div class="p-8 text-center border-2 border-dashed border-slate-100 rounded-3xl mb-10">
-            <p class="text-slate-400 italic text-sm">No shipping address found on your profile.</p>
-        </div>
-        {% endif %}
+        `
+      } else {
+        addressCont.innerHTML = `
+            <div class="p-8 text-center border-2 border-dashed border-slate-100 rounded-3xl mb-10">
+              <p class="text-slate-400 italic text-sm">No shipping address found on your profile.</p>
+            </div>
+        `;
+      }
+      if (data_check) {
+        inputPhone.value = data_check.phone;
+        inputCompany.value = data_check.company || '';
+        inputSurname.value = data_check.surname;
+        inputAddress1.value = data_check.address_1;
+        inputAddress2.value = data_check.address_2 || '';
+        inputTown.value = data_check.town;
+        inputState.value = data_check.state;
+        inputZip.value = data_check.zip;
+      }
+      inputCountry.innerHTML = countries.map(c => `
+  <option value="${c}" ${data_check && data_check.country === c ? 'selected' : ''}>
+    ${c}
+  </option>
+`).join('');
+    }
+    );
 
-        <div id="edit-info-form" style="display:none;" class="mt-8 pt-8 border-t border-slate-100">
-            <form action="/checkout_update" method="POST" class="space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Surname</label>
-                        <input type="text" name="surname" value="{{ data_check.surname if data_check else '' }}" class="w-full px-6 py-4 rounded-xl bg-slate-50 border-none outline-none focus:ring-2 focus:ring-indigo-600">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Phone Number</label>
-                        <input type="text" name="phone" value="{{ data_check.number if data_check else '' }}" class="w-full px-6 py-4 rounded-xl bg-slate-50 border-none outline-none focus:ring-2 focus:ring-indigo-600">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Company Name</label>
-                        <input type="text" name="company" value="{{ data_check.company_name if data_check else '' }}" class="w-full px-6 py-4 rounded-xl bg-slate-50 border-none outline-none">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Country</label>
-                        <select name="country" class="w-full px-6 py-4 rounded-xl bg-slate-50 border-none outline-none appearance-none">
-                            {% for c in countries %}
-                            <option value="{{ c }}" {% if data_check and data_check.country == c %}selected{% endif %}>{{ c }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-
-                <div class="space-y-4">
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Street Address 1</label>
-                        <input type="text" name="address_1" value="{{ data_check.street_address_1 if data_check else '' }}" required class="w-full px-6 py-4 rounded-xl bg-slate-50 border-none outline-none">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Street Address 2 (Optional)</label>
-                        <input type="text" name="address_2" value="{{ data_check.street_address_2 if data_check else '' }}" class="w-full px-6 py-4 rounded-xl bg-slate-50 border-none outline-none">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Town / City</label>
-                        <input type="text" name="town" value="{{ data_check.town if data_check else '' }}" required class="w-full px-6 py-4 rounded-xl bg-slate-50 border-none outline-none">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">State</label>
-                        <input type="text" name="state" value="{{ data_check.state if data_check else '' }}" required class="w-full px-6 py-4 rounded-xl bg-slate-50 border-none outline-none">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Zip Code</label>
-                        <input type="text" name="zip" value="{{ data_check.zip_code if data_check else '' }}" required class="w-full px-6 py-4 rounded-xl bg-slate-50 border-none outline-none">
-                    </div>
-                </div>
-
-                <button type="submit" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-indigo-600 transition shadow-xl">
-                    Save Delivery Profile
-                </button>
-            </form>
-        </div>
-    </div>
-</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+</script>
 {% endblock %}

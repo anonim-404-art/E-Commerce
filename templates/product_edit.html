@@ -7,7 +7,7 @@
       </h2>
       <p class="text-slate-500 mt-2 font-medium">
         Update details for:
-        <span class="text-slate-900 font-bold">{{ product.name }}</span>
+        <span id="product-name" class="text-slate-900 font-bold"></span>
       </p>
     </div>
     <a
@@ -21,7 +21,7 @@
     class="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden"
   >
     <form
-      action="/product_edit/{{ product.id }}"
+      id="edit-form"
       method="POST"
       enctype="multipart/form-data"
       class="p-10 lg:p-16 space-y-8"
@@ -33,9 +33,9 @@
             >Product Name</label
           >
           <input
+            id="input-name"
             type="text"
             name="name"
-            value="{{ product.name }}"
             required
             class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-600 outline-none transition-all"
           />
@@ -48,7 +48,7 @@
           <input
             type="text"
             name="brand"
-            value="{{ product.brand }}"
+            id="input-brand"
             required
             class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-600 outline-none transition-all"
           />
@@ -66,32 +66,13 @@
           <input
             type="color"
             name="color"
-            {%
-            if
-            product.colors
-            %}
-            value="{{ product.colors[0] }}"
-            {%
-            else
-            %}
-            value="#6366f1"
-            {%
-            endif
-            %}
+            id="input-color"
             class="w-14 h-12 bg-transparent border-none cursor-pointer rounded-xl [&::-webkit-color-swatch-wrapper]:p-1 [&::-webkit-color-swatch]:rounded-lg [&::-webkit-color-swatch]:border-none"
           />
 
           <input
             type="text"
             id="hex-display"
-            {%
-            if
-            product.colors
-            %}
-            value="{{ product.colors[0] }}"
-            {%
-            endif
-            %}
             readonly
             class="bg-transparent border-none text-slate-900 text-sm font-medium ml-2 outline-none flex-1 pointer-events-none"
           />
@@ -104,10 +85,10 @@
             >Price ($)</label
           >
           <input
+            id="input-price"
             type="number"
             step="0.01"
             name="price"
-            value="{{ product.price }}"
             required
             class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-600 outline-none transition-all"
           />
@@ -120,7 +101,7 @@
           <input
             type="number"
             name="quantity"
-            value="{{ product.quantity }}"
+            id="input-quantity"
             required
             class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-600 outline-none transition-all"
           />
@@ -155,10 +136,9 @@
         <textarea
           name="description"
           rows="4"
+          id="input-desc"
           class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-600 outline-none transition-all"
-        >
-{{ product.description }}</textarea
-        >
+        ></textarea>
       </div>
 
       <div class="pt-8 border-t border-slate-100">
@@ -218,6 +198,11 @@
               class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-slate-50 file:text-slate-600"
             />
           </div>
+          <span
+            class="text-slate-500 mt-2 font-medium col-span-full block text-center"
+            >You can leave any image field blank if you don't want to update
+            it.</span
+          >
         </div>
       </div>
 
@@ -231,12 +216,43 @@
   </div>
 </div>
 <script>
-  // Simple listener to update the text when the color is changed
   const colorInput = document.querySelector('input[type="color"]');
   const hexDisplay = document.querySelector("#hex-display");
 
   colorInput.addEventListener("input", (e) => {
     hexDisplay.value = e.target.value.toUpperCase();
   });
+  const productId = window.location.pathname.split("/").pop();
+
+  fetch(`/api/single_product/${productId}`)
+    .then((res) => res.json())
+    .then((product) => {
+      const productName = document.getElementById("product-name");
+      const editForm = document.getElementById("edit-form");
+      const inputName = document.getElementById("input-name");
+      const inputBrand = document.getElementById("input-brand");
+      const inputColor = document.getElementById("input-color");
+      const inputPrice = document.getElementById("input-price");
+      const inputQuantity = document.getElementById("input-quantity");
+      const inputDesc = document.getElementById("input-desc");
+      if (product.error) {
+        window.location.href = "/product";
+        return;
+      }
+      if (product.colors && product.colors.length > 0) {
+        inputColor.value = product.colors[0];
+        hexDisplay.value = product.colors[0].toUpperCase();
+      } else {
+        inputColor.value = "#6366f1";
+        hexDisplay.value = "#6366F1";
+      }
+      editForm.action = `/product_edit/${product.id}`;
+      inputName.value = product.name;
+      productName.innerText = product.name;
+      inputBrand.value = product.brand;
+      inputPrice.value = product.price;
+      inputQuantity.value = product.quantity;
+      inputDesc.value = product.description;
+    });
 </script>
 {% endblock %}

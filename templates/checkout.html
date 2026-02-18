@@ -1,171 +1,7 @@
 {% extends "base.html" %} {% block content %}
 <div class="max-w-7xl mx-auto px-6 py-16">
   <div class="flex flex-col lg:flex-row gap-16">
-    <div class="flex-[1.5]">
-      {% if data_check %}
-      <div
-        class="bg-white rounded-[2.5rem] p-12 border border-slate-100 shadow-sm space-y-10 animate-in fade-in duration-500"
-      >
-        <div class="flex justify-between items-center">
-          <h3 class="text-2xl font-black text-slate-900 italic">
-            Saved Address<span class="text-indigo-600">.</span>
-          </h3>
-          <a
-            onclick="alert('Can be changed in Account Info section.')"
-            href="/account_info"
-            class="text-[10px] font-black uppercase tracking-widest text-indigo-600 border border-indigo-100 px-6 py-2 rounded-full hover:bg-indigo-600 hover:text-white transition"
-            >Edit</a
-          >
-        </div>
-
-        <div
-          class="grid grid-cols-1 md:grid-cols-2 gap-10 py-8 border-y border-slate-50"
-        >
-          <div>
-            <p
-              class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2"
-            >
-              Recipient
-            </p>
-            <p class="font-bold text-slate-800">{{ data_check.surname }}</p>
-            <p class="text-slate-500 text-sm mt-1">{{ data_check.number }}</p>
-          </div>
-          <div>
-            <p
-              class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2"
-            >
-              Shipping To
-            </p>
-            <p class="font-bold text-slate-800 leading-relaxed">
-              {{ data_check.street_address_1 }}<br />
-              {{ data_check.town }}, {{ data_check.state }} {{
-              data_check.zip_code }}<br />
-              <span class="text-indigo-600">{{ data_check.country }}</span>
-            </p>
-          </div>
-        </div>
-
-        <form action="/order_page" method="POST">
-          <input
-            type="hidden"
-            name="surname"
-            value="{{ data_check.surname }}"
-          />
-          <input type="hidden" name="phone" value="{{ data_check.number }}" />
-          <input
-            type="hidden"
-            name="country"
-            value="{{ data_check.country }}"
-          />
-          <input
-            type="hidden"
-            name="address_1"
-            value="{{ data_check.street_address_1 }}"
-          />
-          <input
-            type="hidden"
-            name="address_2"
-            value="{{ data_check.street_address_2 }}"
-          />
-          <input type="hidden" name="town" value="{{ data_check.town }}" />
-          <input type="hidden" name="state" value="{{ data_check.state }}" />
-          <input type="hidden" name="zip" value="{{ data_check.zip_code }}" />
-
-          <button
-            type="submit"
-            class="w-full bg-slate-900 text-white py-6 rounded-2xl font-black text-xs uppercase tracking-[0.3em] hover:bg-indigo-600 transition-all shadow-xl"
-          >
-            Confirm Order
-          </button>
-        </form>
-      </div>
-
-      {% else %}
-      <div
-        class="bg-white rounded-[2.5rem] p-12 border border-slate-100 shadow-sm"
-      >
-        <h3 class="text-2xl font-black text-slate-900 mb-10 italic">
-          Shipping Details<span class="text-indigo-600">.</span>
-        </h3>
-
-        <form action="/checkout" method="POST" class="space-y-6">
-          <div class="grid grid-cols-2 gap-6">
-            <input
-              type="text"
-              name="surname"
-              placeholder="Surname"
-              required
-              class="w-full px-8 py-5 rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-indigo-600 outline-none"
-            />
-            <input
-              type="text"
-              name="phone"
-              placeholder="Phone Number"
-              required
-              class="w-full px-8 py-5 rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-indigo-600 outline-none"
-            />
-          </div>
-
-          <div class="space-y-4">
-            <input
-              type="text"
-              name="address_1"
-              placeholder="Street Address"
-              required
-              class="w-full px-8 py-5 rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-indigo-600 outline-none"
-            />
-            <input
-              type="text"
-              name="address_2"
-              placeholder="Apartment, suite, etc (optional)"
-              class="w-full px-8 py-5 rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-indigo-600 outline-none"
-            />
-          </div>
-
-          <div class="grid grid-cols-3 gap-6">
-            <input
-              type="text"
-              name="town"
-              placeholder="City"
-              required
-              class="w-full px-8 py-5 rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-indigo-600 outline-none"
-            />
-            <input
-              type="text"
-              name="state"
-              placeholder="State"
-              required
-              class="w-full px-8 py-5 rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-indigo-600 outline-none"
-            />
-            <input
-              type="text"
-              name="zip"
-              placeholder="Zip"
-              required
-              class="w-full px-8 py-5 rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-indigo-600 outline-none"
-            />
-          </div>
-
-          <select
-            name="country"
-            required
-            class="w-full px-8 py-5 rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-indigo-600 outline-none"
-          >
-            {% for c in countries %}
-            <option value="{{ c }}">{{ c }}</option>
-            {% endfor %}
-          </select>
-
-          <button
-            type="submit"
-            class="w-full bg-slate-900 text-white py-6 rounded-2xl font-black text-xs uppercase tracking-[0.3em] hover:bg-indigo-600 transition-all shadow-xl mt-4"
-          >
-            Save & Continue
-          </button>
-        </form>
-      </div>
-      {% endif %}
-    </div>
+    <div id="checkout-main-section" class="flex-[1.5]"></div>
 
     <div class="flex-1">
       <div class="bg-slate-900 text-white rounded-[2.5rem] p-10 sticky top-10">
@@ -174,31 +10,112 @@
         >
           Order Summary
         </h4>
-        <div class="space-y-6 max-h-[300px] overflow-y-auto mb-8 pr-2">
-          {% for item in items %}
-          <div class="flex items-center gap-4">
-            <img
-              src="{{ item.info.images }}"
-              class="w-16 h-16 rounded-xl object-cover bg-white/10"
-            />
-            <div class="min-w-0">
-              <p class="font-bold text-sm truncate">{{ item.info.name }}</p>
-              <p class="font-bold text-sm truncate">{{ item.quantity }}</p>
-              <p class="text-indigo-400 font-black text-[10px] uppercase">
-                ${{ item.total_price }}
-              </p>
-            </div>
-          </div>
-          {% endfor %}
-        </div>
+        <div
+          id="summary-items"
+          class="space-y-6 max-h-[300px] overflow-y-auto mb-8 pr-2"
+        ></div>
         <div
           class="pt-6 border-t border-white/10 flex justify-between items-center"
         >
           <span class="text-slate-400 font-bold text-xs uppercase">Total</span>
-          <span class="text-2xl font-black">${{ subtotal }}</span>
+          <span id="summary-total" class="text-2xl font-black">$0.00</span>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+  // We fetch ALL the data the page needs in one go
+  fetch("/api/checkout-data")
+    .then((res) => res.json())
+    .then((data) => {
+      const mainSection = document.getElementById("checkout-main-section");
+      const summaryContainer = document.getElementById("summary-items");
+      const subtotalElement = document.getElementById("summary-total");
+
+      // --- 1. RENDER LEFT SIDE (LOGIC) ---
+      if (data.data_check) {
+        // User already has a saved address
+        mainSection.innerHTML = `
+          <div class="bg-white rounded-[2.5rem] p-12 border border-slate-100 shadow-sm space-y-10">
+            <div class="flex justify-between items-center">
+              <h3 class="text-2xl font-black text-slate-900 italic">Saved Address<span class="text-indigo-600">.</span></h3>
+              <a href="/account_info" class="text-[10px] font-black uppercase tracking-widest text-indigo-600 border border-indigo-100 px-6 py-2 rounded-full hover:bg-indigo-600 hover:text-white transition">Edit</a>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 py-8 border-y border-slate-50">
+              <div>
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Recipient</p>
+                <p class="font-bold text-slate-800">${data.data_check.surname}</p>
+                <p class="text-slate-500 text-sm mt-1">${data.data_check.phone}</p>
+              </div>
+              <div>
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Shipping To</p>
+                <p class="font-bold text-slate-800 leading-relaxed">
+                  ${data.data_check.address_1}<br />
+                  ${data.data_check.town}, ${data.data_check.state} ${data.data_check.zip}<br />
+                  <span class="text-indigo-600">${data.data_check.country}</span>
+                </p>
+              </div>
+            </div>
+            <form action="/order_page" method="POST">
+                <button type="submit" class="w-full bg-slate-900 text-white py-6 rounded-2xl font-black text-xs uppercase tracking-[0.3em] hover:bg-indigo-600 transition-all shadow-xl">Confirm Order</button>
+            </form>
+          </div>`;
+      } else {
+        // No address found, show the form
+        mainSection.innerHTML = `
+          <div class="bg-white rounded-[2.5rem] p-12 border border-slate-100 shadow-sm">
+            <h3 class="text-2xl font-black text-slate-900 mb-10 italic">
+              Shipping Details<span class="text-indigo-600">.</span>
+            </h3>
+
+            <form action="/checkout" method="POST" class="space-y-6">
+              <div class="grid grid-cols-2 gap-6">
+                <input type="text" name="surname" placeholder="Surname" required class="w-full px-8 py-5 rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-indigo-600 outline-none" />
+                <input type="text" name="phone" placeholder="Phone Number" required class="w-full px-8 py-5 rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-indigo-600 outline-none" />
+              </div>
+
+              <div class="space-y-4">
+                <input type="text" name="address_1" placeholder="Street Address" required class="w-full px-8 py-5 rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-indigo-600 outline-none" />
+                <input type="text" name="address_2" placeholder="Apartment, suite, etc (optional)" class="w-full px-8 py-5 rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-indigo-600 outline-none" />
+              </div>
+
+              <div class="grid grid-cols-3 gap-6">
+                <input type="text" name="town" placeholder="City" required class="w-full px-8 py-5 rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-indigo-600 outline-none" />
+                <input type="text" name="state" placeholder="State" required class="w-full px-8 py-5 rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-indigo-600 outline-none" />
+                <input type="text" name="zip" placeholder="Zip" required class="w-full px-8 py-5 rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-indigo-600 outline-none" />
+              </div>
+
+              <select name="country" required class="w-full px-8 py-5 rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-indigo-600 outline-none">
+                ${data.countries.map((c) => `<option value="${c}">${c}</option>`).join("")}
+              </select>
+
+              <button type="submit" class="w-full bg-slate-900 text-white py-6 rounded-2xl font-black text-xs uppercase tracking-[0.3em] hover:bg-indigo-600 transition-all shadow-xl mt-4">
+                Save & Continue
+              </button>
+            </form>
+          </div>`;
+      }
+
+      // --- 2. RENDER SUMMARY (RIGHT SIDE) ---
+      if (data.items && data.items.length > 0) {
+        subtotalElement.innerText = `$${data.subtotal}`;
+        summaryContainer.innerHTML = data.items
+          .map(
+            (item) => `
+            <div class="flex items-center gap-4">
+              <img src="${item.image}" class="w-16 h-16 rounded-xl object-cover bg-white/10" />
+              <div class="min-w-0">
+                <p class="font-bold text-sm truncate">${item.name}</p>
+                <p class="text-slate-400 text-xs">Qty: ${item.quantity}</p>
+                <p class="text-indigo-400 font-black text-[10px] uppercase">$${item.total_price}</p>
+              </div>
+            </div>
+        `,
+          )
+          .join("");
+      }
+    });
+</script>
 {% endblock %}

@@ -5,26 +5,80 @@
   </h2>
 
   <div class="flex flex-col lg:flex-row gap-16">
-    <div class="flex-1 space-y-8">
-      {% if user.product %} {% for item in user.product %}
+    <div id="cart-cont" class="flex-1 space-y-8">
+    </div>
+
+    <div class="w-full lg:w-[400px]">
       <div
+        class="bg-white rounded-[3.5rem] p-10 border border-slate-100 shadow-2xl shadow-slate-200/50 sticky top-24"
+      >
+        <h3 class="text-2xl font-black text-slate-900 mb-8 italic">Summary</h3>
+
+        <div class="space-y-4 mb-8">
+          <div class="flex justify-between text-slate-500 font-medium">
+            <span>Items Count</span>
+            <span id="firstQty" class="text-slate-900"></span>
+          </div>
+          <div class="flex justify-between text-slate-500 font-medium">
+            <span>Shipping</span>
+            <span
+              class="text-green-500 font-bold uppercase text-[10px] tracking-widest pt-1"
+              >Complimentary</span
+            >
+          </div>
+          <div
+            class="pt-4 border-t border-slate-50 flex justify-between items-end"
+          >
+            <span class="text-slate-900 font-bold">Subtotal</span>
+            <span
+              id="subtotal"
+              class="text-3xl font-[900] text-slate-900 tracking-tighter"
+            >$<span id="currentTotal">
+            </span'>
+            </span>
+          </div>
+        </div>
+        <div id="button-cont">
+
+        </div>
+        <p
+          class="text-center text-[10px] text-slate-400 font-medium mt-6 uppercase tracking-widest"
+        >
+          Taxes calculated at checkout
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div>
+  <script>
+    fetch("/api/cart")
+      .then((response) => response.json())
+      .then((data) => {
+        const cartContainer = document.getElementById("cart-cont");
+        console.log("Cart Data:", data);
+        if (data.cart && data.cart.length > 0) {
+          cartContainer.innerHTML = "";
+          data.cart.forEach((item) => {
+            cartContainer.innerHTML += `
+            <div
         class="flex flex-col md:flex-row items-center justify-between p-8 bg-white rounded-[3rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-500"
       >
         <div class="flex items-center space-x-8 w-full md:w-auto">
           <div
             class="w-32 h-32 rounded-[2rem] overflow-hidden bg-slate-50 flex-shrink-0"
           >
-            <img src="{{ item.images }}" class="w-full h-full object-cover" />
+            <img src="${ item.image }" class="w-full h-full object-cover" />
           </div>
           <div>
             <p
               class="text-[10px] font-black text-indigo-600 uppercase tracking-widest mb-1"
             >
-              {{ item.brand }}
+              ${ item.brand }
             </p>
-            <h3 class="text-xl font-bold text-slate-900">{{ item.name }}</h3>
+            <h3 class="text-xl font-bold text-slate-900">${ item.name }</h3>
             <p class="text-slate-400 text-sm font-medium mt-1">
-              Category: {{ item.category|capitalize }}
+              Category: ${ item.category }
             </p>
           </div>
         </div>
@@ -36,18 +90,18 @@
             class="flex items-center bg-slate-50 rounded-2xl p-2 border border-slate-100"
           >
             <button
-              onclick="changeQty({{ item.id }}, -1)"
+              onclick="changeQty(${ item.id }, -1)"
               class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-indigo-600 transition"
             >
               -
             </button>
             <span
-              id="qty-{{ item.id }}"
+              id="qty-${ item.id }"
               class="w-8 text-center text-sm font-black text-slate-900"
               >1</span
             >
             <button
-              onclick="changeQty({{ item.id }}, 1)"
+              onclick="changeQty(${ item.id }, 1)"
               class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-indigo-600 transition"
             >
               +
@@ -61,12 +115,12 @@
               Total
             </p>
             <p class="font-black text-slate-900">
-              $<span id="price-{{ item.id }}">{{ item.price }}</span>
+              $<span id="price-${ item.id }">${ item.price }</span>
             </p>
           </div>
 
           <a
-            href="/delete_cart/{{ item.id }}"
+            href="/delete_cart/${ item.id }"
             class="p-4 bg-red-50 text-red-500 rounded-2xl hover:bg-red-500 hover:text-white transition-all active:scale-95"
           >
             <svg
@@ -87,7 +141,10 @@
         </div>
       </div>
 
-      {% endfor %} {% else %}
+            `;
+        });
+        } else {
+          cartContainer.innerHTML = `
       <div
         class="py-32 text-center bg-white rounded-[4rem] border border-dashed border-slate-200"
       >
@@ -101,69 +158,35 @@
           Discover Pieces
         </a>
       </div>
-      {% endif %}
-    </div>
-
-    <div class="w-full lg:w-[400px]">
-      <div
-        class="bg-white rounded-[3.5rem] p-10 border border-slate-100 shadow-2xl shadow-slate-200/50 sticky top-24"
-      >
-        <h3 class="text-2xl font-black text-slate-900 mb-8 italic">Summary</h3>
-
-        <div class="space-y-4 mb-8">
-          <div class="flex justify-between text-slate-500 font-medium">
-            <span>Items Count</span>
-            <span id="firstQty" class="text-slate-900">{{ user.product|length }}</span>
-          </div>
-          <div class="flex justify-between text-slate-500 font-medium">
-            <span>Shipping</span>
-            <span
-              class="text-green-500 font-bold uppercase text-[10px] tracking-widest pt-1"
-              >Complimentary</span
-            >
-          </div>
-          <div
-            class="pt-4 border-t border-slate-50 flex justify-between items-end"
-          >
-            <span class="text-slate-900 font-bold">Subtotal</span>
-            <span
-              id="subtotal"
-              class="text-3xl font-[900] text-slate-900 tracking-tighter"
-            >$<span id="currentTotal">
-{{ user.product | sum(attribute='price') }}
-            </span'>
-              
-            </span>
-          </div>
-        </div>
-
-        {% if user.product %}
+          `;
+        }
+        const firstQtySpan = document.getElementById(`firstQty`);
+        firstQtySpan.innerText = data.cart.length;
+        const total = data.cart.reduce((accumulator, item) => {
+          return accumulator + (item.price * item.quantity);
+          }, 0);
+          document.getElementById("currentTotal").innerText = total.toFixed(2);
+          const buttonCont = document.getElementById("button-cont");
+          if (data.cart.length > 0) {
+            buttonCont.innerHTML = `
         <a
           href="/checkout"
           class="block w-full bg-slate-900 text-white text-center py-6 rounded-2xl font-bold text-xs uppercase tracking-[0.2em] hover:bg-indigo-600 transition-all shadow-xl shadow-indigo-100 active:scale-[0.98]"
         >
           Secure Checkout
-        </a>
-        {% else %}
+        </a>`;}else {
+            buttonCont.innerHTML = `
         <button
           disabled
           class="w-full bg-slate-100 text-slate-300 py-6 rounded-2xl font-bold text-xs uppercase tracking-[0.2em] cursor-not-out"
         >
           Bag Empty
         </button>
-        {% endif %}
+        `};
+          });
 
-        <p
-          class="text-center text-[10px] text-slate-400 font-medium mt-6 uppercase tracking-widest"
-        >
-          Taxes calculated at checkout
-        </p>
-      </div>
-    </div>
-  </div>
 
-</div>
-  <script>
+
     function changeQty(productId, num) {
       const qtySpan = document.getElementById(`qty-${productId}`);
       const priceSpan = document.getElementById(`price-${productId}`);
@@ -200,5 +223,6 @@
           }
         });
     }
+
   </script>
 {% endblock %}

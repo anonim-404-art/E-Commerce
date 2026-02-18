@@ -138,7 +138,7 @@ def image_def(photo):
 @app.route('/')
 def main():
     user = online_user()
-    wishlist_check = Wishlist.query.filter(User.id == Wishlist.user).all()
+    wishlist_check = Wishlist.query.filter(Wishlist.user == user.id).all() if user else []
     products = Product.query.all()
     date = Product.query.order_by(Product.date.desc()).all()
     return render_template("index.html", user=user, wishlist=wishlist_check, date=date, products=products)
@@ -173,18 +173,23 @@ def add_cart(product_id):
 @app.route('/delete_cart/<int:store_id>')
 def delete_cart(store_id):
     user = online_user()
-    product = Product.query.filter(Product.id == store_id).first()
-    if product in user.product:
-        user.product.remove(product)
-        db.session.commit()
-        if 'cart' in session:
-            cart = dict(session['cart'])
+    product = Product.query.get(store_id)
+    
+    if user and product:
+        if product in user.product:
+            user.product.remove(product)
+            db.session.commit()
+
+        cart_data = session.get('cart')
+        
+        if isinstance(cart_data, dict):
             str_id = str(store_id)
-            
-            if str_id in cart:
-                cart.pop(str_id)
-                session['cart'] = cart
+            if str_id in cart_data:
+                updated_cart = dict(cart_data)
+                updated_cart.pop(str_id)
+                session['cart'] = updated_cart
                 session.modified = True 
+
     return redirect(url_for("cart"))
 
 
@@ -251,7 +256,7 @@ def checkout():
         )
         db.session.add(add)
         db.session.commit()
-        return redirect(url_for("order_page", user=user))
+        return redirect(url_for("checkout", user=user))
     return render_template("checkout.html",items=display_items,subtotal=subtotal, countries=countries, user=user, data_check=data_check)
 
 @app.route('/order_page', methods=["POST", "GET"])
@@ -296,7 +301,7 @@ def order_page():
             user.product.clear()
             db.session.commit()
         return redirect(url_for("account_info"))
-    return render_template("order.html", user=user, total=subtotal)
+    return redirect(url_for("account_info"))
 
 
 
@@ -338,13 +343,7 @@ def shop():
 
 @app.route('/single_product/<int:product_id>')
 def single_product(product_id):
-    user = online_user()
-    if not user:
-        return redirect(url_for("account"))
-    else:
-        product = Product.query.filter(Product.id == product_id).first()
-        wishlist_item = Wishlist.query.filter_by(user=user.id, product_id=product.id).first()
-        return render_template("single-product.html", user=user, product=product, wishlist_item=wishlist_item)
+    return render_template("single-product.html")
 
 
 @app.route('/wishlist')
@@ -492,30 +491,37 @@ def delete_product(product_id):
 @app.route('/account_info')
 def account_info():
     user = online_user()
-    countries = sorted(CountryInfo().all().keys())
     data_check = Checkout.query.filter_by(user_id=user.id).first()
     all_orders = Order.query.filter_by(user_id=user.id).all()
-    subtotal = 0
-    allQty = 0
-    shits = defaultdict(list)
+    shits = {}
     for order in all_orders:
+        subtotal = 0
+        allQty = 0
+        order_items = []
         for items in order.product_info:
             productInfo = Product.query.get(items['id'])
-            subtotal += items['total_price']
+            if not productInfo:
+                continue
+            item_total = items['total_price'] * items['quantity']
+            subtotal += item_total
             allQty += items['quantity']
             newData = {
                 'id': items['id'],
                 'name': items['name'],
                 'price': items['price'],
                 'quantity': items['quantity'],
-                'total_price': items['total_price'],
+                'total_price': item_total,
                 'image': productInfo.images
             }
 
-            shits[order.id].append(newData)
-            print(items)
-    return render_template('account_info.html', user=user, data_check=data_check, countries=countries,
-                            orders=all_orders,products=shits,allQty=allQty, subtotal=subtotal)
+            order_items.append(newData)
+        shits[order.id] = {
+        'items': order_items,
+        'total': subtotal,
+        'qty': allQty
+    }
+    return render_template('account_info.html', user=user, data_check=data_check,
+                            orders=all_orders,products=shits)
 
 
 @app.route('/register', methods=["POST", "GET"])
@@ -550,15 +556,6 @@ def change_password():
             db.session.commit()
             return redirect(url_for("account_info"))
     return redirect(url_for("account_info"))
-
-
-@app.route('/api/data', methods=["GET", "POST"])
-def data_get():
-    total = request.get_json()
-    session['total'] = total.get("total")
-    response = {"message": "qabul qilindi", "malumot": total}
-    return jsonify(response), 200
-
 
 @app.route('/change_user_info', methods=["POST", "GET"])
 def change_user_info():
@@ -711,18 +708,280 @@ def app_data():
         "message": "Success"
     }), 200
 
-# create admin and seller users by EMAIL
-with app.app_context():
-    db.create_all()
-    admin_user = User.query.filter_by(email='admin@gmail.com').first()
-    if admin_user:
-        admin_user.role = "admin"
+@app.route('/api/account_info')
+def get_account_info():
+    user = online_user()
+    if not user:
+        return jsonify({"logged_in": False}), 200
 
-    seller_user = User.query.filter_by(email='seller@gmail.com').first()
-    if seller_user:
-        seller_user.role = "seller"
-    db.session.commit()
+    all_orders = Order.query.filter_by(user_id=user.id).all()
+    data_check = Checkout.query.filter_by(user_id=user.id).first()
+    countries = sorted(CountryInfo().all().keys())
 
+    
+
+    formatted_orders = []
+    for order in all_orders:
+        subtotal = 0
+        allQty = 0
+        order_items = []
+        
+        for items in order.product_info:
+            productInfo = Product.query.get(items['id'])
+            if not productInfo:
+                continue
+            
+            item_total = items['total_price'] * items['quantity']
+            subtotal += item_total
+            allQty += items['quantity']
+            
+            order_items.append({
+                'id': items['id'],
+                'name': items['name'],
+                'price': items['price'],
+                'quantity': items['quantity'],
+                'total_price': item_total,
+                'image': productInfo.images
+            })
+
+        formatted_orders.append({
+            'id': order.id,
+            'date': order.date,
+            'total': subtotal,
+            'qty': allQty,
+            'items': order_items,
+            'note': getattr(order, 'note', '')
+        })  
+    print(data_check)
+    return jsonify({
+        "user": {
+            "name": user.name,
+            "surname": user.surname,
+            "email": user.email,
+            "role": user.role
+        },
+        "orders": formatted_orders,
+        "data_check": {
+            "surname": data_check.surname,
+            "phone": data_check.number,
+            "address_1": data_check.street_address_1,
+            "town": data_check.town,
+            "state": data_check.state,
+            "company": data_check.company_name,
+            "address_2": data_check.street_address_2,
+            "zip": data_check.zip_code,
+            "country": data_check.country
+        }if data_check else None,
+        "countries": countries
+    }), 200
+
+@app.route('/api/shop')
+def api_shop():
+    user = online_user()
+    products = Product.query.all()
+    wishlist_ids = []
+    if user:
+        wishlist_ids = [wish.product_id for wish in Wishlist.query.filter_by(user=user.id).all()]
+    return jsonify({
+        "products": [
+            {"id": product.id, "name": product.name, "price": product.price, "images": product.images, "category": product.category, "brand": product.brand} 
+            for product in products
+        ],
+        "wishlist_product_ids": wishlist_ids
+    })
+
+
+@app.route('/api/admin_data')
+def admin_data():
+    user = online_user()
+    if not user or user.role != 'admin':
+        return jsonify({"error": "Unauthorized"}), 403
+    
+    requests = Request.query.all()
+    request_list = []
+    for r in requests:
+        request_list.append({
+            "user_id": r.user_id,
+            "name": r.user.name,
+            "surname": r.user.surname,
+            "email": r.user.email,
+            "initial": r.user.name[0].upper()
+        })
+    return jsonify(request_list)
+
+@app.route('/api/index')
+def index_data():
+    user = online_user()
+    if not user:
+        return jsonify({"logged_in": False}), 200
+    date = Product.query.order_by(Product.date.desc()).all()
+    items = []
+    for i in date[:4]:
+        items.append({
+            "id": i.id,
+            "name": i.name,
+            "price": i.price,
+            "image": i.images,
+            "brand": i.brand
+        })
+    return jsonify({
+        "logged_in": True,
+        "items": items
+    }), 200
+    
+@app.route('/api/wishlist')
+def get_wishlist():
+    user = online_user()
+    if not user:
+        return jsonify({"logged_in": False}), 200
+    wishlist = Wishlist.query.filter(Wishlist.user == user.id).all()
+    wishlists = []
+    for i in wishlist:
+        if i.product is not None:
+            wishlists.append({
+                    "id": i.product.id,
+                     "name": i.product.name,
+                     "price": i.product.price,
+                    "image": i.product.images,
+                    "brand": i.product.brand
+                })
+        
+    return jsonify({
+        "logged_in": True,
+        "wishlist": wishlists
+    }), 200
+
+
+@app.route('/api/checkout-data')
+def get_checkout_data():
+    user = online_user()
+    if not user:
+        return jsonify({"logged_in": False}), 401
+
+    cart = session.get('cart', {})
+    if not isinstance(cart, dict):
+        cart = {}
+    check = Checkout.query.filter_by(user_id=user.id).first()
+    data_check = None
+    count_keys = CountryInfo().all().keys()
+    countries_list = sorted(count_keys)
+    if check:
+        data_check = {
+            "surname": check.surname,
+            "phone": check.number,
+            "address_1": check.street_address_1,
+            "town": check.town,
+            "state": check.state,
+            "zip": check.zip_code,
+            "country": check.country
+        }
+    display_items = []
+    subtotal = 0
+    
+    for product_id, qty in cart.items():
+        product = Product.query.get(product_id)
+        if product:
+            item_total = product.price * qty
+            subtotal += item_total
+            display_items.append({
+                "id": product.id,
+                "name": product.name,
+                "price": product.price,
+                "image": product.images,
+                "quantity": qty,
+                "total_price": round(item_total, 2)
+            })
+
+    return jsonify({
+        "logged_in": True,
+        "data_check": data_check,
+        "countries": countries_list,
+        "items": display_items,
+        "subtotal": round(subtotal, 2)
+    }), 200
+
+
+@app.route('/api/cart')
+def get_cart():
+    user = online_user()
+    if not user:
+        return jsonify({"logged_in": False}), 200
+
+    db_products = user.product 
+    
+    cart_items = []
+    for product in db_products:
+        cart_items.append({
+            "id": product.id,
+            "name": product.name,
+            "price": product.price,
+            "image": product.images,
+            "brand": product.brand,
+            "category": product.category,
+            "quantity": 1 
+        })
+
+    return jsonify({
+        "logged_in": True,
+        "cart": cart_items
+    }), 200
+
+@app.route('/api/product')
+def get_product():
+    user = online_user()
+    if not user:
+        return jsonify({"logged_in": False}), 200
+    products = Product.query.filter(Product.user_id == user.id).all()
+    product_list = []
+    for product in products:
+        product_list.append({
+            "id": product.id,
+            "name": product.name,
+            "price": product.price,
+            "image": product.images,
+            "brand": product.brand,
+            "category": product.category,
+            "quantity": product.quantity,
+            "sold_count": product.sold_count
+        })
+    return jsonify(product_list), 200
+
+@app.route('/api/single_product/<int:product_id>')
+def get_single_product(product_id):
+    user = online_user()
+    if not user:
+        return jsonify({"logged_in": False}), 200
+    product = Product.query.get(product_id)
+    if not product:
+        return jsonify({"error": "Product not found"}), 404
+    return jsonify({
+        "id": product.id,
+        "name": product.name,
+        "price": product.price,
+        "image": product.images,
+        "brand": product.brand,
+        "category": product.category,
+        "quantity": product.quantity,
+        "sold_count": product.sold_count,
+        "colors": product.colors,
+        "description": product.description
+    }), 200
+
+
+# This endpoint provides basic user information along with their login status, which can be used by the frontend to manage user sessions and display personalized content.
+@app.route('/api/user')
+def get_user():
+    user = online_user()
+    if not user:
+        return jsonify({"logged_in": False}), 200
+    return jsonify({
+        "logged_in": True,
+        "name": user.name,
+        "surname": user.surname,
+        "email": user.email,
+        "role": user.role,
+        "products": [product.id for product in user.product],
+    }), 200
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
